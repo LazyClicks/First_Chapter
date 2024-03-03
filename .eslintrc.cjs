@@ -19,6 +19,7 @@ module.exports = {
     ecmaFeatures: {
       jsx: true,
     },
+    ignorePatterns: ["tailwind.config.js"],
   },
   plugins: ["@typescript-eslint"],
   rules: {
