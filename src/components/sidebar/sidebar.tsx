@@ -32,11 +32,11 @@ export const Sidebar = component$(() => {
           <li key={index}>
             <input
               class="accent-[#292828] outline-none  cursor-pointer"
-              type="checkbox"
+              type="radio"
               id={category}
-              name={category}
+              name={"category"}
               value={category}
-              onClick$={() => {
+              onChange$={() => {
                 userData.value = category;
               }}
               // bind:value={userData}
