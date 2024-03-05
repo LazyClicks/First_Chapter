@@ -4,6 +4,7 @@ import type { RequestHandler } from "@builder.io/qwik-city";
 import { Footer } from "~/components/footer/footer";
 import { Navbar } from "~/components/navbar/navbar";
 import { Sidebar } from "~/components/sidebar/sidebar";
+import { SidebarProvider } from "~/features/context/sidebarContext";
 
 export const onGet: RequestHandler = async ({ cacheControl }) => {
   // Control caching for this request for best performance and to reduce hosting costs:
@@ -27,10 +28,12 @@ export default component$(() => {
     <>
       <Navbar />
       <div class="flex items-start">
-        <Sidebar />
-        <main>
-          <Slot />
-        </main>
+        <SidebarProvider>
+          <Sidebar />
+          <main>
+            <Slot />
+          </main>
+        </SidebarProvider>
       </div>
       <Footer />
     </>

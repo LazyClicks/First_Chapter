@@ -1,51 +1,49 @@
-import { component$ } from "@builder.io/qwik";
+import {
+  Resource,
+  component$,
+  useContext,
+  useResource$,
+} from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
-import { routeLoader$ } from "@builder.io/qwik-city";
-// import { categoryContext } from "~/components/sidebar/sidebar";
-
-const API_KEY = process.env.API_KEY;
-const BASE_URL = "https://www.googleapis.com/books/v1/volumes";
-
-interface Book {
-  id: string;
-  selfLink: string;
-  volumeInfo: {
-    title: string;
-    authors: string[];
-    imageLinks: {
-      smallThumbnail: string;
-      thumbnail: string;
-    };
-    categories: string[];
-  };
-}
-
-export const useBooks = routeLoader$(async () => {
-  const res = await fetch(
-    `${BASE_URL}?q=search+subject:Fiction&key=${API_KEY}&maxResults=40`
-  );
-  const data = await res.json();
-  const books: Book[] = data.items;
-  return books;
-});
+import { getBooks } from "~/features/api/fetchBooks";
+import { categoryContext } from "~/features/context/sidebarContext";
+import { type Book } from "~/features/api/fetchBooks";
 
 export default component$(() => {
-  // const userData = useContext(categoryContext);
-  // console.log(userData.value);
-  const signal = useBooks();
+  const userData = useContext(categoryContext);
+  console.log(userData.category);
+  const categoriesResource = useResource$<Book[]>(
+    async ({ track, cleanup }) => {
+      console.log(userData.category);
+      track(() => userData);
+      console.log(userData.category);
+
+      const controller = new AbortController();
+      cleanup(() => controller.abort());
+
+      return await getBooks(userData.category, "search+subject", controller);
+    }
+  );
   return (
-    <div class=" flex flex-wrap gap-4 p-4 justify-center">
-      {signal.value.map((book) => (
-        <div key={book.id}>
-          <img
-            class="h-full"
-            src={book.volumeInfo.imageLinks.thumbnail}
-            width={200}
-            height={80}
-          />
+    <Resource
+      value={categoriesResource}
+      onPending={() => <div class="bg-red-500">Loading...</div>}
+      onRejected={(reason) => <div>Error: {reason.message}</div>}
+      onResolved={(Books) => (
+        <div class="flex flex-wrap gap-4 p-4 justify-center">
+          {Books.map((book) => (
+            <div key={book.id}>
+              <img
+                class="h-full"
+                src={book.volumeInfo.imageLinks?.thumbnail}
+                width={200}
+                height={80}
+              />
+            </div>
+          ))}
         </div>
-      ))}
-    </div>
+      )}
+    />
   );
 });
 

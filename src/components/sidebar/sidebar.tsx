@@ -1,5 +1,5 @@
-import { component$ } from "@builder.io/qwik";
-// import { createContextId, useContextProvider } from "@builder.io/qwik";
+import { component$, useContext } from "@builder.io/qwik";
+import { categoryContext } from "~/features/context/sidebarContext";
 
 const bookCategories = [
   "Fiction",
@@ -21,14 +21,8 @@ const bookCategories = [
   "Science",
 ];
 
-// export const categoryContext =
-//   createContextId<Signal<string>>("Category Context");
-
 export const Sidebar = component$(() => {
-  //   const selectedCategory = useSignal("");
-
-  //   useContextProvider(categoryContext, selectedCategory);
-
+  const userData = useContext(categoryContext);
   return (
     <div class="border-4 border-[#292828] rounded-lg p-4 max-h-fit mt-3 ml-2 inline-block">
       <p class="underline underline-offset-2 text-xl pb-4">Categories</p>
@@ -41,7 +35,9 @@ export const Sidebar = component$(() => {
               id={category}
               name={category}
               value={category}
-              //   onClick$={() => (selectedCategory.value = category)}
+              onClick$={() => {
+                userData.category = category;
+              }}
             />
             <label class="px-2 text-sm">{category}</label>
           </li>
