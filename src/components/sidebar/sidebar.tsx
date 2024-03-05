@@ -1,5 +1,5 @@
 import { component$, useContext } from "@builder.io/qwik";
-import { categoryContext } from "~/features/context/sidebarContext";
+import { categoryContext } from "~/routes/layout";
 
 const bookCategories = [
   "Fiction",
@@ -23,6 +23,7 @@ const bookCategories = [
 
 export const Sidebar = component$(() => {
   const userData = useContext(categoryContext);
+  console.log(userData.value);
   return (
     <div class="border-4 border-[#292828] rounded-lg p-4 max-h-fit mt-3 ml-2 inline-block">
       <p class="underline underline-offset-2 text-xl pb-4">Categories</p>
@@ -36,8 +37,9 @@ export const Sidebar = component$(() => {
               name={category}
               value={category}
               onClick$={() => {
-                userData.category = category;
+                userData.value = category;
               }}
+              // bind:value={userData}
             />
             <label class="px-2 text-sm">{category}</label>
           </li>

@@ -1,4 +1,12 @@
-import { component$, Slot } from "@builder.io/qwik";
+import {
+  component$,
+  createContextId,
+  Signal,
+  Slot,
+  useContextProvider,
+  useSignal,
+  useStore,
+} from "@builder.io/qwik";
 import { routeLoader$ } from "@builder.io/qwik-city";
 import type { RequestHandler } from "@builder.io/qwik-city";
 import { Footer } from "~/components/footer/footer";
@@ -22,18 +30,22 @@ export const useServerTimeLoader = routeLoader$(() => {
     date: new Date().toISOString(),
   };
 });
-
+export const categoryContext =
+  createContextId<Signal<string>>("Category_Context");
 export default component$(() => {
+  const selectedCategory = useSignal("");
+
+  useContextProvider(categoryContext, selectedCategory);
   return (
     <>
       <Navbar />
       <div class="flex items-start">
-        <SidebarProvider>
-          <Sidebar />
-          <main>
-            <Slot />
-          </main>
-        </SidebarProvider>
+        {/* <SidebarProvider> */}
+        <Sidebar />
+        <main>
+          <Slot />
+        </main>
+        {/* </SidebarProvider> */}
       </div>
       <Footer />
     </>

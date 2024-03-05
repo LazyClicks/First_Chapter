@@ -6,44 +6,31 @@ import {
 } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { getBooks } from "~/features/api/fetchBooks";
-import { categoryContext } from "~/features/context/sidebarContext";
+import { categoryContext } from "~/routes/layout";
 import { type Book } from "~/features/api/fetchBooks";
 
 export default component$(() => {
   const userData = useContext(categoryContext);
-  console.log(userData.category);
-  const categoriesResource = useResource$<Book[]>(
-    async ({ track, cleanup }) => {
-      console.log(userData.category);
-      track(() => userData);
-      console.log(userData.category);
+  console.log(userData.value);
+  const categoriesResource = useResource$(async ({ track, cleanup }) => {
+    track(() => userData.value);
+    console.log(userData.value);
 
-      const controller = new AbortController();
-      cleanup(() => controller.abort());
+    const controller = new AbortController();
+    cleanup(() => controller.abort());
 
-      return await getBooks(userData.category, "search+subject", controller);
-    }
-  );
+    return console.log("success");
+  });
   return (
     <Resource
       value={categoriesResource}
       onPending={() => <div class="bg-red-500">Loading...</div>}
-      onRejected={(reason) => <div>Error: {reason.message}</div>}
-      onResolved={(Books) => (
-        <div class="flex flex-wrap gap-4 p-4 justify-center">
-          {Books.map((book) => (
-            <div key={book.id}>
-              <img
-                class="h-full"
-                src={book.volumeInfo.imageLinks?.thumbnail}
-                width={200}
-                height={80}
-              />
-            </div>
-          ))}
-        </div>
+      onRejected={() => <div>Error:</div>}
+      onResolved={() => (
+        <div class="flex flex-wrap gap-4 p-4 justify-center">resolved</div>
       )}
     />
+    // <></>
   );
 });
 
